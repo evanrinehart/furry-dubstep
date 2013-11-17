@@ -6,6 +6,18 @@ COMMANDS = [
   {
     :names => ['name'],
     :form => 'vx'
+  },
+  {
+    :names => ['help'],
+    :form => 'vx'
+  },
+  {
+    :names => ['goto', 'go'],
+    :form => 'vx'
+  },
+  {
+    :names => ['at'],
+    :form => 'vx'
   }
 ]
 

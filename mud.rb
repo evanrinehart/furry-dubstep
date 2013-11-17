@@ -5,14 +5,20 @@ require './dialog'
 require './lookup'
 require './parser'
 require './commands'
+require './intercom'
 
 class Mud
 
   class Bug < StandardError; end
 
-  def initialize
+  def initialize at
+    @at = at
     @db = Database.new
     @players = {}
+  end
+
+  def at time, &block
+    @at.call(time, &block)
   end
 
   def connect id, tell, kick
@@ -31,6 +37,10 @@ class Mud
   def message id, msg
     player = get_player id
     player.resume(msg)
+  end
+
+  def wakeup
+    global_msg "BING BONG"
   end
 
 end

@@ -1,5 +1,9 @@
 class Mud
 
+  def cmd_unknown player
+    player.puts "unknown command"
+  end
+
   def cmd_quit player
     player.puts "you are about to be disconnected"
     player.kick
@@ -16,8 +20,19 @@ class Mud
     end
   end
 
-  def cmd_unknown player
-    player.puts "unknown command"
+  def cmd_help player, topic
+    player.puts "there is nothing I can do for you now"
+  end
+
+  def cmd_goto player, destination
+    player.puts "hmmm"
+  end
+
+  def cmd_at player, wait
+    t = Time.now + wait.to_i
+    at t do
+      player.puts "BONGGGGG"
+    end
   end
 
 end
