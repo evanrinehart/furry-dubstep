@@ -28,11 +28,4 @@ class Mud
     player.puts "hmmm"
   end
 
-  def cmd_at player, wait
-    t = Time.now + wait.to_i
-    at t do
-      player.puts "BONGGGGG"
-    end
-  end
-
 end

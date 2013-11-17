@@ -14,10 +14,6 @@ COMMANDS = [
   {
     :names => ['goto', 'go'],
     :form => 'vx'
-  },
-  {
-    :names => ['at'],
-    :form => 'vx'
   }
 ]
 
