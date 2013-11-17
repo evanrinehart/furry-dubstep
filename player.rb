@@ -2,12 +2,13 @@ class Player
 
   class Error < StandardError; end
 
-  def initialize id, tell, kick, login
+  def initialize id, tell, kick, mud
     @id = id
     @tell = tell
     @kick = kick
-    @continuation = login
+    @handler = :login
     @account = nil
+    @mud = mud
   end
 
   attr_reader :id
@@ -26,17 +27,23 @@ class Player
     @kick[]
   end
 
-  def read &block
-    @continuation = block
+  def resume msg
+    prompt, cont = @mud.send(@handler, self, msg)
+    tell prompt
+    @handler = cont
   end
 
-  def resume msg
-    @continuation[self, msg]
+  def bootstrap
+    resume ''
   end
 
   def account= account
     raise Error, "don't try to set a players account twice" if @account
     @account = account
+  end
+
+  def prompt
+    "> "
   end
 
 end

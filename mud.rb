@@ -16,8 +16,11 @@ class Mud
   end
 
   def connect id, tell, kick
-    puts "#{id} connecting"
-    @players[id] = Player.new id, tell, kick, lambda{|x,y| login x,y}
+    player = Player.new id, tell, kick, self
+    raise Bug, "player #{id} is already connected?" if @players[id]
+    @players[id] = player
+    player.bootstrap
+    puts "#{id} connected"
   end
 
   def disconnect id
@@ -30,16 +33,38 @@ class Mud
     player.resume(msg)
   end
 
-  def login player, msg
-puts msg.inspect
-    puts "#{player.id} said: #{msg}"
+  def login player, msg=''
+    ["enter a secret passphrase: ", :enter_passphrase]
+  end
+
+  def enter_passphrase player, msg
     account = @db.auth_account msg
     if account.nil?
-      account = @db.create_account msg
+      ["do you want to create a new account with this secret? ", :confirm_create]
+    else
+      login_success player, account
     end
-puts account.inspect
-    puts "you are logged in as #{account[:name]}"
+  end
+
+  def confirm_create player, msg
+    if msg =~ /y(es|eah|ep)?/
+      account = @db.create_account msg
+      login_success player, account
+    else
+      login player
+    end
+  end
+
+  def login_success player, account
     player.account = account
+    player.puts "you are now logged in"
+    player.puts "OMG SPLASH SCREEN"
+    [player.prompt, :prompt]
+  end
+
+  def prompt player, msg
+    player.puts "i heard"
+    [player.prompt, :prompt]
   end
 
 end
