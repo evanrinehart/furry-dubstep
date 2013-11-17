@@ -16,7 +16,7 @@ class Database
         }
       end
 
-      update :create_account do |s, hash|
+      update_mr :create_account do |s, hash|
         id = s[:counter]
         s[:counter] += 1
         s[:accounts][id] = {
@@ -24,7 +24,11 @@ class Database
           :secret => hash,
           :name => "CMNDR",
         }
-        [s, id]
+        id
+      end
+
+      update_m :set_account_name do |s, id, name|
+        s[:accounts][id][:name] = name
       end
 
       view :state do |s| s end
@@ -45,9 +49,17 @@ class Database
     @acid.account(id)
   end
 
+  def set_account_name id, name
+    @acid.set_account_name id, name
+  end
+
   def auth_account secret
     fp = Secret.hash secret
     @account_by_secret[fp]
+  end
+
+  def account id
+    @acid.account(id)
   end
 
   def unique_index set, field
