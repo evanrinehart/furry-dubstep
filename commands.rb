@@ -28,4 +28,31 @@ class Mud
     player.puts "hmmm"
   end
 
+  def cmd_look player
+    loc = player.location
+    units = @db.units_in_location loc
+    player.puts loc
+    player.puts "you see here:" if units.count > 0
+    units.each do |u|
+      account = @db.account_for_unit u[:id]
+      if account
+        player.puts " #{u[:class]} (#{account[:name]})"
+      else
+        player.puts " #{u[:class]}"
+      end
+    end
+  end
+
+  def cmd_examine player, text
+    loc = player.location
+    units = @db.units_in_location loc
+    target = units.find{|x| x[:class] == text}
+    if target.nil?
+      player.puts "I see no #{text}"
+    else
+      player.puts "some #{target[:class]} unit"
+    end
+  end
+
+
 end

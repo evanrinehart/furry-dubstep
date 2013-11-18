@@ -14,6 +14,14 @@ COMMANDS = [
   {
     :names => ['goto', 'go'],
     :form => 'vx'
+  },
+  {
+    :names => ['look', 'l', 'ls'],
+    :form => 'v'
+  },
+  {
+    :names => ['examine', 'ex'],
+    :form => 'vx'
   }
 ]
 

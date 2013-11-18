@@ -25,7 +25,11 @@ class Mud
   end
 
   def login_success player, account
-    player.account = account
+    player.account_id = account[:id]
+    if player.unit.nil?
+      unit_id = @db.create_unit 'commander', 'forest'
+      @db.set_account_unit player.account_id, unit_id
+    end
     player.puts "you are now logged in"
     player.puts "OMG SPLASH SCREEN"
     [player.prompt, :prompt]

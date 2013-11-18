@@ -6,6 +6,7 @@ require './lookup'
 require './parser'
 require './commands'
 require './intercom'
+require './land'
 
 class Mud
 
