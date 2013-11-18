@@ -7,6 +7,7 @@ class Database
 
   def initialize
 
+    db = self
     @acid = Acid.new 'world.db' do
 
       init do
@@ -15,6 +16,24 @@ class Database
           :accounts => {},
           :units => {},
           :land_links => {}
+        }
+      end
+
+      serialize do |s|
+        {
+          :counter => s[:counter],
+          :accounts => s[:accounts].values,
+          :units => s[:units].values,
+          :land_links => s[:land_links].map{|a,s| s.keys.map{|b| [a,b]}}.flatten(1)
+        }
+      end
+
+      deserialize do |p|
+        {
+          :counter => p[:counter],
+          :accounts => db.list_to_index(p[:accounts], :id),
+          :units => db.list_to_index(p[:units], :id),
+          :land_links => db.pairs_to_index(p[:land_links])
         }
       end
 
@@ -190,6 +209,29 @@ class Database
     if index.has_key?(key)
       index[key].delete(element)
     end
+  end
+
+  def list_to_index list, field
+    s = {}
+    list.each{|x| s[x[field]] = x}
+    s
+  end
+
+  def list_to_set list
+    s = {}
+    list.each{|x| s[x] = nil}
+    s
+  end
+
+  def pairs_to_index pairs
+    s = {}
+    pairs.each do |a,b|
+      if !s.has_key? a
+        s[a] = {}
+      end
+      s[a][b] = nil
+    end
+    s
   end
 
 end
