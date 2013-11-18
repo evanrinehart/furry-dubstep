@@ -93,7 +93,7 @@ class Database
 
   def set_account_unit aid, uid
     @acid.set_account_unit aid, uid
-    @account_by_unid_id[uid] = @acid.account(aid)
+    @account_by_unit_id[uid] = @acid.account(aid)
   end
 
   def auth_account secret
@@ -110,7 +110,9 @@ class Database
   end
 
   def create_unit unit_class, location
-    @acid.create_unit unit_class, location
+    uid = @acid.create_unit unit_class, location
+    write_index @unit_ids_by_location, location, uid
+    uid
   end
 
   def delete_unit uid
@@ -154,12 +156,16 @@ class Database
     set.each do |id, item|
       key = item[field]
       next if key.nil?
-      if !table.has_key? key
-        table[key] = {}
-      end
-      table[key][id] = nil
+      write_index table, key, id
     end
     table
+  end
+
+  def write_index index, key, element
+    if !index.has_key?(key)
+      index[key] = {}
+    end
+    index[key][element] = nil
   end
 
 end
