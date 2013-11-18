@@ -22,6 +22,10 @@ COMMANDS = [
   {
     :names => ['examine', 'ex'],
     :form => 'vx'
+  },
+  {
+    :names => ['checkpoint'],
+    :form => 'v'
   }
 ]
 

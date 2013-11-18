@@ -25,7 +25,13 @@ class Mud
   end
 
   def cmd_goto player, destination
-    player.puts "hmmm"
+    if LANDS.include? destination
+      uid = player.unit_id
+      @db.move_unit uid, destination
+      cmd_look player
+    else
+      player.puts "don't try to go there"
+    end
   end
 
   def cmd_look player
@@ -52,6 +58,11 @@ class Mud
     else
       player.puts "some #{target[:class]} unit"
     end
+  end
+
+  def cmd_checkpoint player
+    @db.checkpoint
+    player.puts "done"
   end
 
 

@@ -60,6 +60,10 @@ class Database
         s[:land_links][land0][land1] = nil
       end
 
+      update_m :move_unit do |s, uid, loc|
+        s[:units][uid][:location] = loc
+      end
+
       view :state do |s| s end
       view :account do |s, id| s[:accounts][id] end
       view :unit do |s, id| s[:units][id] end
@@ -71,6 +75,7 @@ class Database
     @account_by_secret = unique_index(state[:accounts], :secret)
     @account_by_unit_id = unique_index(state[:accounts], :unit_id)
     @unit_ids_by_location = index(state[:units], :location)
+
   end
 
   def units_in_location loc
@@ -92,6 +97,7 @@ class Database
   end
 
   def set_account_unit aid, uid
+    raise Error, "no account #{aid}" if @acid.account(aid).nil?
     @acid.set_account_unit aid, uid
     @account_by_unit_id[uid] = @acid.account(aid)
   end
@@ -140,6 +146,18 @@ class Database
     @account_by_unit_id[uid]
   end
 
+  def move_unit uid, location
+    raise Error, "invalid location" if !LANDS.include?(location)
+    loc0 = @acid.unit(uid)[:location]
+    @acid.move_unit uid, location
+    clear_index @unit_ids_by_location, loc0, uid
+    write_index @unit_ids_by_location, location, uid
+  end
+
+  def checkpoint
+    @acid.checkpoint
+  end
+
   def unique_index set, field
     table = {}
     set.each do |id, item|
@@ -166,6 +184,12 @@ class Database
       index[key] = {}
     end
     index[key][element] = nil
+  end
+
+  def clear_index index, key, element
+    if index.has_key?(key)
+      index[key].delete(element)
+    end
   end
 
 end
