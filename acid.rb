@@ -17,10 +17,8 @@ class Acid
     begin
       @state = load_log @log_path
     rescue Errno::ENOENT
-      log_file = File.open(@log_path, 'w')
       @state = @init[]
-      log_file.puts(JSON.generate({:checkpoint => @state}))
-      log_file.close
+      _checkpoint @log_path, @state
     end
 
     @log_file = File.open(@log_path, 'a')
