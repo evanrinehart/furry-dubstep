@@ -15,10 +15,12 @@ LANDS = %w{
   catacombs
   dungeon
   castle
-  wasteland
+  wastelands
   temple
   mansion
   pyramid
   void
+  tunnels
+  highlands
 }
 

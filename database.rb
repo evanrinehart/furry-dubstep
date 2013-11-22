@@ -79,6 +79,12 @@ class Database
         s[:land_links][land0][land1] = nil
       end
 
+      update_m :delete_land_link do |s, land0, land1|
+        if s[:land_links][land0]
+          s[:land_links][land0].delete(land1)
+        end
+      end
+
       update_m :move_unit do |s, uid, loc|
         s[:units][uid][:location] = loc
       end
@@ -86,7 +92,7 @@ class Database
       view :state do |s| s end
       view :account do |s, id| s[:accounts][id] end
       view :unit do |s, id| s[:units][id] end
-      view :land_links do |s, land| (s[:land_links][land]||{}).keys end
+      view :links_from_land do |s, land| (s[:land_links][land]||{}).keys end
 
     end
 
@@ -153,12 +159,12 @@ class Database
     @acid.delete_unit uid
   end
 
-  def link_land land0, land1
-    @acid.create_link_links land0, land1
+  def create_link land0, land1
+    @acid.create_land_link land0, land1
   end
 
-  def land_links land
-    @acid.land_links land
+  def delete_link land0, land1
+    @acid.delete_land_link land0, land1
   end
 
   def account_for_unit uid
@@ -175,6 +181,10 @@ class Database
 
   def checkpoint
     @acid.checkpoint
+  end
+
+  def links_from_land land
+    @acid.links_from_land land
   end
 
   def unique_index set, field

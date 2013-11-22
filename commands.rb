@@ -65,5 +65,38 @@ class Mud
     player.puts "done"
   end
 
+  def cmd_lands player
+    player.puts LANDS.join("\n")
+  end
+
+  def cmd_link player, text
+    loc = player.location
+    if LANDS.include? text
+      @db.create_link loc, text
+      player.puts "you link to #{text} from here"
+    else
+      player.puts "#{text.inspect} does not exist"
+    end
+  end
+
+  def cmd_links player
+    loc = player.location
+    links = @db.links_from_land(loc)
+    if links.empty?
+      player.puts "nowhere to go"
+    else
+      player.puts links.join("\n")
+    end
+  end
+
+  def cmd_unlink player, text
+    loc = player.location
+    if LANDS.include? text
+      @db.delete_link loc, text
+      player.puts "you remove any existing link to #{text}"
+    else
+      player.puts "#{text.inspect} does not exist"
+    end
+  end
 
 end

@@ -26,7 +26,17 @@ COMMANDS = [
   {
     :names => ['checkpoint'],
     :form => 'v'
-  }
+  },
+  {
+    :names => ['lands'],
+    :form => 'v'
+  },
+  {
+    :names => ['link'],
+    :form => 'vx'
+  },
+  {:names => ['links'], :form => 'v'},
+  {:names => ['unlink'], :form => 'vx'}
 ]
 
 class Mud
